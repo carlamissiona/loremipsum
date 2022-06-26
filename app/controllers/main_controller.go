@@ -63,7 +63,7 @@ func RenderIndex(c * fiber.Ctx) error {
     fmt.Printf("---\ngo-spew-----------\n")
     spew.Dump(jrsp)
     json.NewDecoder(response.Body).Decode(jrsp)
-    log.Println("rense structaaa:", jrsp)
+    log.Println(" structaaa:", jrsp)
     return c.Render("index", fiber.Map {
         "FiberTitle": "Hello From Fiber Html Engine",
     }, "layouts/htm")
