@@ -8,36 +8,73 @@ import (
     "log"
     "encoding/json"
     "time"
-    "fmt"
+    // "fmt"
     "bytes"
-    "github.com/davecgh/go-spew/spew"
-)
- 
+) 
 
+ type DataForm struct {
+    Loremsite_Users   []User     `json:"loremsite_users"` 
+} 
 type User struct {
-    Full_name string
-    Email string
-}
-
-type Response struct {
-    Msg    string
-    User   interface{}
-    Status int
-    Data       []Users
-}
-// var post Article 
-//   json.Unmarshal(reqBody, &post)
+    Full_name string   `json:"full_name"`
+    Email string    `json:"email"`
+} 
+type Request struct {
+    Data   DataForm 
+}   
 var Url = "https://loremdb.hasura.app/v1/graphql"
-
+ 
 func RenderIndex(c * fiber.Ctx) error {
-    //*********/ Query Users 
+    //**********/ Query User    
     q:= hasura.Query_user()
     req, err:= http.NewRequest("POST", Url, bytes.NewBuffer(q))
     if err != nil {
-        log.Println("Error in Gql Run") }
+        log.Println("Error in Gql Run") 
+    }
   
-    client:= & http.Client {
-        Timeout: time.Second * 7
+    client:= &http.Client {
+        Timeout: time.Second*7,
+    }
+    response, err:= client.Do(req)
+    defer response.Body.Close()
+    if err != nil {
+        log.Println("Error in Clieee snt Do Run")
+    }
+    data_bytes, _:= ioutil.ReadAll(response.Body)
+    
+    log.Println(string(data_bytes));
+    
+    data_resp := Request{}
+    err = json.Unmarshal(data_bytes, &data_resp) 
+     
+    if err != nil  {
+        log.Println("Can not unmnarshal JSON")
+    } 
+    log.Println("This -> HTTP Response: %s"); 
+    log.Println(data_resp.Data.Loremsite_Users[0])
+     
+    return c.Render("index", fiber.Map {
+        "FiberTitle": "Hello From Fiber Html Engine",
+    }, "layouts/htm")
+}
+          
+ 
+func RenderAddGraph(c * fiber.Ctx) error {
+    //**********/ Query User    
+    q:= hasura.Query_user()
+    req, err:= http.NewRequest("POST", Url, bytes.NewBuffer(q))
+    if err != nil {
+        log.Println("Error in Gql Run") 
+    }
+
+
+
+
+
+
+         
+    client:= &http.Client {
+        Timeout: time.Second*7,
     }
     response, err:= client.Do(req)
     defer response.Body.Close()
@@ -45,104 +82,18 @@ func RenderIndex(c * fiber.Ctx) error {
         log.Println("Error in Clieee snt Do Run")
     }
     data, _:= ioutil.ReadAll(response.Body)
-     log.Println("string(data)");  log.Println("string(data)");  log.Println("string(data)");
-
+    
     log.Println(string(data));
-    log.Println("%#v\n, data");
-    log.Println("%#v\n, data");log.Println("%#v\n, data");log.Println("%#v\n, data")
-    fmt.Printf("======%#v\n", response.Body)
-
-    var jrsp map[string]interface {} = nil
-
-    if err:= json.Unmarshal(data, & jrsp);err != nil {
+    
+    data_resp := Request{}
+     
+    if err:= json.Unmarshal(data, &data_resp) ; err != nil {
         log.Println("Can not unmnarshal JSON")
-    }
-    log.Printf("", response)
-
-    log.Println(jrsp)
-    fmt.Printf("---\ngo-spew-----------\n")
-    spew.Dump(jrsp)
-    json.NewDecoder(response.Body).Decode(jrsp)
-    log.Println(" structaaa:", jrsp)
+    } 
+    log.Println("This -> HTTP Response: %s"); log.Println(data_resp.Data.Loremsite_Users[0])
+     
     return c.Render("index", fiber.Map {
         "FiberTitle": "Hello From Fiber Html Engine",
     }, "layouts/htm")
 }
- 
-// type Response struct {
-//     Data       []Users
-   
-// }
-
-// type Users struct {
-//     Data string      `json:"data"`
-//     Key string            `json:"key"`
-//     Value string          `json:"value"`
-// }
-
-// func main() {
-//     s := string(`{"operation": "get", "key": "example"}`)
-//     data := Request{}
-//     json.Unmarshal([]byte(s), &data)
-//     fmt.Printf("Operation: %s", data.Operation)
-// }
-// /////////
-
-// type Request struct {
-//     Operation string      `json:"operation"`
-//     Key string            `json:"key"`
-//     Value string          `json:"value"`
-// }
-
-// func main() {
-//     s := string(`{"operation": "get", "key": "example"}`)
-//     data := Request{}
-//     json.Unmarshal([]byte(s), &data)
-//     fmt.Printf("Operation: %s", data.Operation)
-// }
-
-// ..
-// import (
-//   "encoding/json"
-//   "fmt"
-//   "io/ioutil"
-//   "log"
-//   "net/http"
-
-//   "github.com/gorilla/mux"
-// )
-
-// type Article struct {
-//   Id string `json:"Id"`
-//   Title string `json:"Title"`
-//   Content string `json:"Content"`
-//   Summary string `json:"Summary"`
-// }
-
-// ...
-
-// func createNewArticle(w http.ResponseWriter, r *http.Request) {
-//   reqBody, _ := ioutil.ReadAll(r.Body)
-//   var post Article 
-//   json.Unmarshal(reqBody, &post)
-
-//   json.NewEncoder(w).Encode(post)
-
-//   newData, err := json.Marshal(post)
-//   if err != nil {
-//     fmt.Println(err)
-//   } else {
-//     fmt.Println(string(newData))
-//   }
-// }
-
-// func handleReqs() {
-//   r := mux.NewRouter().StrictSlash(true)
-//   r.HandleFunc("/post", createNewArticle).Methods("POST")
-
-//   log.Fatal(http.ListenAndServe(":8000", r))
-// }
-
-// func main() {
-//   handleReqs();
-// }
+     
