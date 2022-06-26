@@ -34,6 +34,7 @@ import (
 
 
 
+
  func Query_user_asc() []byte  {
  
   gr := map[string]string{
@@ -82,17 +83,17 @@ import (
 
 
 
- func Mutation_user() []byte  {
+ func Mutation_user(email string , fullname string) []byte  {
  
   gr := map[string]string{
     "query": ` 
       mutation MyMutation {
-        insert_loremsite_users(objects: {email: "", full_name: ""})
+        insert_loremsite_users(objects: {email: "`+ email +`", full_name: "`+ fullname + `"})
       }
 
     `,
   }
-  log.Println("============>>>gr"); log.Println(gr)
+  log.Println(">>gr"); log.Println(gr)
   json , err := json.Marshal(gr)
    if err != nil {
      log.Println("Error Marshal")

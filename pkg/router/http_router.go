@@ -14,12 +14,15 @@ type HttpRouter struct {
 }
 
 func (h HttpRouter) InstallRouter(app *fiber.App) {
+	modifr := app.Group("", csrf.New())
+  
 	web := app.Group("", cors.New(), csrf.New())
 	web.Get("/", controllers.RenderIndex)
+  
+  modifr.Post("/signup", controllers.SignupSubmit)
   web.Get("/gens", controllers.RenderGenerators)
-  web.Get("/contact", controllers.RenderContact)
-  web.Get("/register", controllers.SignupSubmit)
-  web.Get("/generator/:name", controllers.RenderGen)   
+  web.Get("/contact", controllers.RenderContact) 
+  web.Get("/generator/:name", controllers.ReadGen)   
 }
 
 func NewHttpRouter() *HttpRouter {

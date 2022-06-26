@@ -6,6 +6,8 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/monitor"
 	"github.com/gofiber/fiber/v2/middleware/recover"
 	"github.com/gofiber/template/html"  
+  
+    "github.com/gofiber/fiber/v2/middleware/csrf"
   // "loremipsumbytes/pkg/database"
   "loremipsumbytes/pkg/router" 
  
@@ -31,6 +33,11 @@ func NewApplication() *fiber.App {
 	app.Use(logger.New())
   
 	app.Get("/dashboard", monitor.New())
+
+  // Initialize default config
+ 
+  
+   
   var r router.Router = nil
   r = router.NewHttpRouter()
   r.InstallRouter(app)
