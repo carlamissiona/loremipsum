@@ -16,7 +16,7 @@ import (
 var Url = "https://loremdb.hasura.app/v1/graphql"
 
 func RenderIndex(c *fiber.Ctx) error {
- //*********/ Query Users 
+ //***********/ Query Users 
   q := hasura.Query_user()
 
   req , err := http.NewRequest("POST", Url, bytes.NewBuffer(q)) 
