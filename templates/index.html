@@ -1,1 +1,7 @@
-Homepage embed
+           {{range $key, $val := .Loremusers }}
+                         <article>
+                            <a href="#" class="image"><img src="{{$val.Url}}" alt="" /></a>
+                            <h3> {{$val.Email}} </h3>
+                    </article>    
+                    {{end}}
+              

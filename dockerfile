@@ -1,7 +1,5 @@
 FROM golang:1.18-bullseye
 
-RUN go install github.com/carlamissiona/loremipsum
-
 ENV GO111MODULE=on
 ENV GOFLAGS=-mod=vendor
 

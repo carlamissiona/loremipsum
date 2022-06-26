@@ -5,7 +5,34 @@ import (
 	"log" 
 
  )
+
+
+ func Query_gens() []byte  {
+ 
+  gr := map[string]string{
+    "query": ` query MyQuery {
+              loremsite_generators {
+                link
+                id
+                name
+                desc
+              }
+            }
+
+    `,
+  }
+  log.Println("============>>>gr"); log.Println(gr)
+  json , err := json.Marshal(gr)
+   if err != nil {
+     log.Println("Error Marshal")
+   }
+   log.Println(" Query_gens") ;     log.Println(" Query_gens") ;    log.Println(" Query_gens")
+  return json
+} 
+
   
+
+
 
  func Query_user_asc() []byte  {
  
@@ -19,7 +46,7 @@ import (
         }
     `,
   }
-  log.Println("============>>>gr"); log.Println(gr)
+  log.Println("========>>>gr"); log.Println(gr)
   json , err := json.Marshal(gr)
    if err != nil {
      log.Println("Error Marshal")
