@@ -15,9 +15,7 @@ import (
     Loremsite_Users   []User     `json:"loremsite_users"` 
     Loremsite_Generators       []Generators   `json:"loremsite_generators"` 
 } 
-type DataFormGens struct {
-    Loremsite_Generators   []Generators     `json:"loremsite_generators"` 
-} 
+
 type Generators struct {
     Name string   `json:"name"`
     Link string   `json:"link"`
@@ -143,4 +141,24 @@ func RenderAddGraph(c * fiber.Ctx) error {
         "FiberTitle": "Hello From Fiber Html Engine",
     }, "layouts/htm")
 }
-     
+
+func SignupSubmit(c * fiber.Ctx) error {
+    //*********/ Query User    
+  
+    
+    return c.Render("signupredirect", fiber.Map {
+        "FiberTitle": "Hello From Fiber Html Engine",
+    }, "layouts/htm")
+}
+
+
+ 
+ 
+func RenderContact(c * fiber.Ctx) error {
+    //*********/ Query User    
+  
+    
+    return c.Render("contact", fiber.Map {
+        "FiberTitle": "Hello From Fiber Html Engine",
+    }, "layouts/htm")
+}
