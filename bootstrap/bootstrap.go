@@ -1,5 +1,5 @@
 package bootstrap
-
+   
 import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/logger"
@@ -7,8 +7,7 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/recover"
 	"github.com/gofiber/template/html"  
   
-    "github.com/gofiber/fiber/v2/middleware/csrf"
-  // "loremipsumbytes/pkg/database"
+  _ "github.com/gofiber/fiber/v2/middleware/csrf" 
   "loremipsumbytes/pkg/router" 
  
   
@@ -20,11 +19,7 @@ func NewApplication() *fiber.App {
   
   // _ = database.SetupDatabase()   
   log.Println("db_instanceh")   
-	engine := html.New("./templates", ".html")
-  
- //  fs := http.FileServer(http.Dir("./static"))
-	// http.Handle("/static", fs)
- 
+	engine := html.New("./templates", ".html") 
    
   app := fiber.New(fiber.Config{Views: engine})
   app.Static("/", "./assets")

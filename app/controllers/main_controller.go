@@ -34,78 +34,32 @@ type Request struct {
 
 var Url = "https://loremdb.hasura.app/v1/graphql"
 
-func RenderIndex(c *fiber.Ctx) error {
-	//*********/ Query User
+func RenderIndex(c *fiber.Ctx) error { 
 	q := hasura.Query_user()
-	req, err := http.NewRequest("POST", Url, bytes.NewBuffer(q))
-	if err != nil {
-		log.Println("Error in Gql Run")
-	}
-
-	client := &http.Client{
-		Timeout: time.Second * 7,
-	}
-	response, err := client.Do(req)
-	defer response.Body.Close()
-	if err != nil {
-		log.Println("Error in Clieee snt Do Run")
-	}
-	data_bytes, _ := ioutil.ReadAll(response.Body)
-
-	log.Println(string(data_bytes))
-
-	data_resp := Request{}
-	err = json.Unmarshal(data_bytes, &data_resp)
-
-	if err != nil {
-		log.Println("Can n not unmnarshal JSON")
-	}
-	log.Println("This ---> HTTP Response: %s")
-	log.Println(data_resp.Data.Loremsite_Users[0])
-
+  data_resp := fetchHttp(q)
+	  
 	gens := fetchGenerators()
-
+  
+  log.Println("gens") ; log.Println(gens)
 	return c.Render("index", fiber.Map{
 		"FiberTitle": "Hello From Fiber Html Engine",
-		"Loremusers": data_resp.Data.Loremsite_Users,
+		"Loremusers": data_resp.Loremsite_Users,
 		"Loremgens":  gens,
 	}, "layouts/htm")
 }
 
-func fetchGenerators() []Generators {
+func fetchGenerators()  []Generators {
 
 	q := hasura.Query_gens()
-	req, err := http.NewRequest("POST", Url, bytes.NewBuffer(q))
-	if err != nil {
-		log.Println("Error in Gql Run")
-	}
-
-	client := &http.Client{
-		Timeout: time.Second * 7,
-	}
-	response, err := client.Do(req)
-	defer response.Body.Close()
-	if err != nil {
-		log.Println("Error in Resp Body  Do Run")
-	}
-	data_bytes, _ := ioutil.ReadAll(response.Body)
-
-	log.Println(string(data_bytes))
-
-	data_resp := Request{}
-	err = json.Unmarshal(data_bytes, &data_resp)
-
-	if err != nil {
-		log.Println("Can not unmnarshal JSON")
-	}
-	log.Println("This -> HTTP Response: Loremsite_Generators %s")
-	log.Println(data_resp.Data.Loremsite_Generators[0])
-
-	return data_resp.Data.Loremsite_Generators
+	data_resp := fetchHttp(q)
+	log.Println("Generators HTTP Response: Loremsite_Generators %s")
+	log.Println(data_resp.Loremsite_Generators[0])
+   
+  return data_resp.Loremsite_Generators
 }
 
 func RenderAddGraph(c *fiber.Ctx) error {
-	//**********/ Query User
+  
 	q := hasura.Query_user()
 	req, err := http.NewRequest("POST", Url, bytes.NewBuffer(q))
 	if err != nil {
@@ -129,33 +83,49 @@ func RenderAddGraph(c *fiber.Ctx) error {
 	if err := json.Unmarshal(data, &data_resp); err != nil {
 		log.Println("Can not unmnarshal JSON")
 	}
-	log.Println("This -> HTTP Response: %s")
-	log.Println(data_resp.Data.Loremsite_Users[0])
+	// log.Println("This -> HTTP Response: %s")
+	// log.Println(data_resp.Data.Loremsite_Users[0])
 
 	return c.Render("index", fiber.Map{
 		"FiberTitle": "Hello From Fiber Html Engine",
 	}, "layouts/htm")
 }
-
+ 
 func SignupSubmit(c *fiber.Ctx) error {
-	//*****/ Query User
+	log.Println("Success in  Mutation")
+  email := c.Params("email")
+  pass := c.Params("password")
+  q := hasura.Mutation_signup_user(email, pass)
+	req, err := http.NewRequest("POST", Url, bytes.NewBuffer(q))
+	if err != nil {
+		log.Println("Error in  Mutation")
+	}
+	log.Println("Success in  Mutation")
+	client := &http.Client{}
+	response, err := client.Do(req)
+	defer response.Body.Close()
+	if err != nil {
+		log.Println("Error in Resp Body Client Run")
+	}
+	data, _ := ioutil.ReadAll(response.Body)
 
-	return c.Render("index", fiber.Map{
-		"FiberTitle": "Hello From Fiber Html Engine",
-	}, "layouts/htm")
-	return nil
-  
+	log.Println(string(data))
+
+  c.Redirect("/")
+  return nil
 }
-
+   
 func ReadGen(c *fiber.Ctx) error { 
-
-	return c.Render("readgenerator", fiber.Map{
-		"FiberTitle": "Hello From Fiber Html Engine",
+ 	n := hasura.Query_gens_byname();
+  log.Println(n)
+  
+  return c.Render("readgenerator", fiber.Map{
+		"n": "Hello From Fiber Html Engine",
 	}, "layouts/htm")
 }
 
 func RenderGenerators(c *fiber.Ctx) error {
-	//*********/ Query User
+
 	gens := fetchGenerators()
 
 	return c.Render("listgens", fiber.Map{
@@ -165,9 +135,38 @@ func RenderGenerators(c *fiber.Ctx) error {
 }
 
 func RenderContact(c *fiber.Ctx) error {
-	//*********/ Query User
+
 
 	return c.Render("contact", fiber.Map{
 		"FiberTitle": "Hello From Fiber Html Engine",
 	}, "layouts/htm")
+}
+
+
+
+func fetchHttp(hq []byte)  DataForm {
+      // Hasura query in bytes  hq [] byte
+      req, err := http.NewRequest("POST", Url, bytes.NewBuffer(hq))
+    	if err != nil {
+    		log.Println("Error in Gql Run")
+    	}
+     
+    	client := &http.Client{
+    		Timeout: time.Second * 7,
+    	}
+    	response, err := client.Do(req)
+  
+    	defer response.Body.Close()
+    	if err != nil {
+    		log.Println("Error in Clieee snt Do Run")
+    	}
+    	data_bytes, _ := ioutil.ReadAll(response.Body)
+    
+    	log.Println(string(data_bytes))
+    	data_resp := Request{}
+    	err = json.Unmarshal(data_bytes, &data_resp)
+      if err != nil {
+    		log.Println("Can n not unmnarshal JSON")
+    	}
+      return data_resp.Data
 }
