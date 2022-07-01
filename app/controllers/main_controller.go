@@ -89,30 +89,31 @@ func RenderAddGraph(c *fiber.Ctx) error {
 	return c.Render("index", fiber.Map{
 		"FiberTitle": "Hello From Fiber Html Engine",
 	}, "layouts/htm")
-}
- 
+} 
+
 func SignupSubmit(c *fiber.Ctx) error {
-	log.Println("Success in  Mutation")
+  log.Println("Success in  Mutation!!!") 
   email := c.Params("email")
   pass := c.Params("password")
+  log.Println(email); log.Println(pass)
   q := hasura.Mutation_signup_user(email, pass)
-	req, err := http.NewRequest("POST", Url, bytes.NewBuffer(q))
-	if err != nil {
-		log.Println("Error in  Mutation")
-	}
-	log.Println("Success in  Mutation")
-	client := &http.Client{}
-	response, err := client.Do(req)
-	defer response.Body.Close()
-	if err != nil {
-		log.Println("Error in Resp Body Client Run")
-	}
-	data, _ := ioutil.ReadAll(response.Body)
+  req, err := http.NewRequest("POST", Url, bytes.NewBuffer(q))
+  if err != nil {
+	log.Println("Error in  Mutation")
+  }
+  log.Println("Success in  Mutation")
+  client := &http.Client{}
+  response, err := client.Do(req)
+  defer response.Body.Close()
+  if err != nil {
+	log.Println("Error in Resp Body Client Run")
+  }
+  data, _ := ioutil.ReadAll(response.Body)
 
-	log.Println(string(data))
-
+  log.Println(string(data))
   c.Redirect("/")
   return nil
+
 }
    
 func ReadGen(c *fiber.Ctx) error { 

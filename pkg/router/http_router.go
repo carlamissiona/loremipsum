@@ -2,7 +2,7 @@ package router
  
 import (
 	"github.com/gofiber/fiber/v2"
-	"github.com/gofiber/fiber/v2/middleware/cors"
+	// "github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/csrf"
 	"loremipsumbytes/app/controllers"
 )
@@ -15,14 +15,15 @@ type HttpRouter struct {
 }
 
 func (h HttpRouter) InstallRouter(app *fiber.App) {
-	 
+ 
+app.Use(csrf.New())
+ 	 
+   
+app.Get("/", controllers.RenderIndex)
   
-	web := app.Group("", cors.New(), csrf.New())
-	web.Get("/", controllers.RenderIndex)
-  
-  web.Post("/signup", controllers.SignupSubmit)
-  web.Get("/gens", controllers.RenderGenerators)
-  web.Get("/contact", controllers.RenderContact)  
+app.All("/signup", controllers.SignupSubmit)
+app.Get("/gens", controllers.RenderGenerators)
+app.Get("/contact", controllers.RenderContact)  
 
   
   

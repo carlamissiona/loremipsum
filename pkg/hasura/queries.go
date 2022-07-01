@@ -109,15 +109,15 @@ func Query_gens_byname() []byte  {
 
 
  func Mutation_signup_user(email string , fullname string) []byte  {
- 
+  log.Println(email);   log.Println(email);
   gr := map[string]string{
-    "query": ` 
-      mutation MyMutation {
-        insert_loremsite_users_one(objects: {email: "`+ email +`", full_name: "`+ fullname + `"})
+    "query": `mutation MyMutation {
+      insert_loremsite_users_one(object: {full_name: "`+ fullname +`", password: "ewew", email: "`+ email +`"}) {
+        id
       }
-
+    }
     `,
-  }
+  } 
    
   log.Println(">>gr"); log.Println(gr)
   json , err := json.Marshal(gr)
