@@ -1,17 +1,13 @@
 package main
 
 import (
-
-   "log"
-   "loremipsumbytes/bootstrap"
- )
+	"log"
+	"loremipsumbytes/bootstrap"
+)
 
 func main() {
-  
+
 	app := bootstrap.NewApplication()
-  log.Fatal(app.Listen(":5001"))
+	log.Fatal(app.Listen(":5000"))
 
- 
 }
-
- 
