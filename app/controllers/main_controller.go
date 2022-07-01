@@ -39,9 +39,6 @@ func RenderIndex(c *fiber.Ctx) error {
 	data_resp := fetchHttp(q)
 
 	gens := fetchGenerators()
-
-	log.Println("gens")
-	log.Println(gens[1])
 	log.Println(data_resp.Loremsite_Users[0])
 	return c.Render("index", fiber.Map{
 		"FiberTitle": "Hello From Fiber Html Engine",
@@ -92,7 +89,30 @@ func RenderAddGraph(c *fiber.Ctx) error {
 		"FiberTitle": "Hello From Fiber Html Engine",
 	}, "layouts/htm")
 }
+func RenderMeme(c *fiber.Ctx) error {
 
+	return c.Render("meme", fiber.Map{
+		"FiberTitle": "Meme Gen",
+	}, "layouts/generic")
+}
+func RenderFantasy(c *fiber.Ctx) error {
+
+	return c.Render("fantasy", fiber.Map{
+		"FiberTitle": "Fantasy Map",
+	}, "layouts/generic")
+}
+func RenderLogin(c *fiber.Ctx) error {
+
+	return c.Render("login", fiber.Map{
+		"SingleTitle": "Login",
+	}, "layouts/generic")
+}
+func RenderRegister(c *fiber.Ctx) error {
+
+	return c.Render("register", fiber.Map{
+		"FiberTitle": "Fantasy Map",
+	}, "layouts/generic")
+}
 func SignupSubmit(c *fiber.Ctx) error {
 
 	email := c.Params("email")
