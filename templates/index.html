@@ -1,20 +1,20 @@
  
- {{range $key, $val := .Loremgens }}
+ {{ range $key, $val  := .Loremgens }}
      
-      <div class="container">
+      <div class="container"> 
              
             <div class="about-wrapper">
-                <div class="after"><h1> {{ $val.Link }}- </h1></div>
+                <div class="after"><h1> {{ .Link }}- </h1></div>
                 <div class="content">
-                    <h5 class="title mb-3">  {{ $val.Name }}- </h5>
+                    <h5 class="title mb-3">  {{ .Title }}- </h5>
                     
                     <div class="row">
                         <div class="col">
-                            <p> {{ $val.Desc  }}  </p>
+                            <p> {{ .Content }}  </p>
                             <p>Hi</p>
                         </div>
                     </div>                   
-                    <a href="{{ $val.Name }}"> {{ $val.Desc  }}Read More...</a>
+                    <a href="{{ .Link}}"> Read More...</a>
                 </div>
             </div>         
         </div>
@@ -25,6 +25,11 @@
 <section>
         
         <div class="container">
+            {{ if ne .Namelogin nil  }}
+            Logout
+        {{ elseif ne .ShowLogin nil }}
+             Login
+        {{ end }} 
             
             <div class="row justify-content-between align-items-center">
                 <div class="col-md-6">
@@ -70,14 +75,14 @@
             
             <div class="row">
 
-     
- {{range $key, $val := .Loremusers }}
+      
+ {{range $key, $val  := .Loremusers }}
               
                 <div class="col-sm-10 col-md-4 m-auto">
                     <div class="testmonial-wrapper">
                         <img src="/imgs/avatar1.jpg" alt="Client Image">
-                        <h6 class="title mb-3">{{ $val.Full_name }} </h6>
-                        <p>{{ $val.Full_name }}Lorem i{{ $val.Full_name }}   {{ $val.Email  }}</p>
+                        <h6 class="title mb-3">{{ .Full_name }} </h6>
+                        <p>{{ .Email  }}</p>
                     </div>
                 </div>
                {{end}}

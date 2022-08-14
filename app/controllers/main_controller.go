@@ -5,27 +5,31 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"log"
-	"loremipsumbytes/pkg/hasura"
+	"loremipsumbytes/pkg/hasura" 
 	"net/http"
-	"time"
-
-	"github.com/gofiber/fiber/v2"
+	"time" 
+	"github.com/gofiber/fiber/v2/middleware/session"
+	"github.com/gofiber/fiber/v2" 
 )
 
 type DataForm struct {
-	Loremsite_Users      []User       `json:"loremsite_users"`
-	Loremsite_Generators []Generators `json:"loremsite_generators"`
+	Lor_Users      []User       `json:"lor_users"`
+	Lor_Gens       []Generators `json:"lor_gens"`
 }
 
 type Generators struct {
-	Name string `json:"name"`
+	Title string `json:"title"`
 	Link string `json:"link"`
-	Desc string `json:"desc"`
+	Content string `json:"content"`
 }
 
 type User struct {
 	Full_name string `json:"full_name"`
 	Email     string `json:"email"`
+	Changed_on string `json:"changed_on"`
+	Created_on string `json:"created_on"`
+	Password string `json:"password"`
+	Id string `json:"id"`
 }
 
 type Request struct {
@@ -34,26 +38,61 @@ type Request struct {
 
 var Url = "https://loremdb.hasura.app/v1/graphql"
 
-func RenderIndex(c *fiber.Ctx) error {
-	q := hasura.Query_user()
-	data_resp := fetchHttp(q)
+var Store = session.New()
 
+func RenderLogout(c *fiber.Ctx) error {
+	
+	sess, err := Store.Get(c)
+	if err != nil {
+		log.Println(err)
+	}
+
+	sess.Delete("name")
+ 
+	// Destry session
+	if err := sess.Destroy(); err != nil {
+		log.Println("Session not destroyed error")
+	}
+
+	return c.Redirect("/")
+ 
+}
+func RenderHome(c *fiber.Ctx) error {
+	return c.Redirect("/")
+}
+func RenderIndex(c *fiber.Ctx) error {
+	sess, err :=Store.Get(c)
+	log.Println("Index Sess");log.Println(sess)
+	if err != nil {
+		log.Println("Index err")
+		log.Println(err)
+	}
+
+	q := hasura.Query_user() 
+ 	data_resp := fetchHttp(q)
+	log.Println(sess)
+ 
+	name := sess.Get("name");log.Println(sess.Get("name"))
+	showLogin := name != nil
+	log.Println(sess);log.Println(name);log.Printf("- %v" , showLogin); // this is bool
+  
 	gens := fetchGenerators()
-	log.Println(data_resp.Loremsite_Users[0])
+	log.Println(data_resp.Lor_Users);log.Println("gens");log.Println("gens");log.Println(gens);
+
 	return c.Render("index", fiber.Map{
-		"FiberTitle": "Hello From Fiber Html Engine",
-		"Loremusers": data_resp.Loremsite_Users,
-		"Loremgens":  gens,
-	}, "layouts/htm")
+		"FiberTitle": "Hello From Lorem Generators",
+		"Loremusers": data_resp.Lor_Users,
+		"Loremgens": gens, 
+		"Namelogin": name, 
+	},  "layouts/htm") 
 }
 
 func fetchGenerators() []Generators {
 
 	q := hasura.Query_gens()
-	data_resp := fetchHttp(q)
-	log.Println(data_resp.Loremsite_Generators[0])
-
-	return data_resp.Loremsite_Generators
+	data_resp := fetchHttp(q);log.Println("Fetch Gen Problem");log.Println("Fetch Gen Problem");
+	log.Println(data_resp);log.Println(data_resp);
+	return data_resp.Lor_Gens
 }
 
 func RenderAddGraph(c *fiber.Ctx) error {
@@ -89,6 +128,12 @@ func RenderAddGraph(c *fiber.Ctx) error {
 		"FiberTitle": "Hello From Fiber Html Engine",
 	}, "layouts/htm")
 }
+func AddGens(c *fiber.Ctx) error {
+
+	return c.Render("meme", fiber.Map{
+		"FiberTitle": "Meme Gen",
+	}, "layouts/generic")
+}
 func RenderMeme(c *fiber.Ctx) error {
 
 	return c.Render("meme", fiber.Map{
@@ -102,7 +147,11 @@ func RenderFantasy(c *fiber.Ctx) error {
 	}, "layouts/generic")
 }
 func RenderLogin(c *fiber.Ctx) error {
-
+    sess, err := Store.Get(c)
+	if err != nil {
+		log.Println(sess)
+		log.Println("Error in Clieee snt Do Run")
+	}
 	return c.Render("login", fiber.Map{
 		"SingleTitle": "Login",
 	}, "layouts/generic")
@@ -113,65 +162,41 @@ func RenderRegister(c *fiber.Ctx) error {
 		"FiberTitle": "Fantasy Map",
 	}, "layouts/generic")
 }
-func SignupSubmit(c *fiber.Ctx) error {
-
-	email := c.Params("email")
-	pass := c.Params("password")
-
-	q := hasura.Mutation_signup_user(email, pass)
+   
+func SignupSubmit(c *fiber.Ctx) error { 
+	full_name := c.FormValue("name")
+	email := c.FormValue("email") 
+	password := c.FormValue("password")
+	created_on := "2022-01-01 00:00:00"; changed_on :="2022-01-01 00:00:00" ;
+	q := hasura.Mutation_signup_user( password , full_name , email ,created_on  ,changed_on   ) 
 	req, err := http.NewRequest("POST", Url, bytes.NewBuffer(q))
+	sess, err := Store.Get(c)
+	log.Println("Req in  Mutation" , req)
+
 	if err != nil {
 		log.Println("Error in  Mutation")
-	}
-	log.Println("Success in  Mutation")
-	client := &http.Client{}
-	response, err := client.Do(req)
+	}else{
+		sess.Set("name", full_name)
+		name := sess.Get("name") 
+	    log.Printf("Login name %v" , name)
+		
+		return c.Redirect("/home")
+ 
+	} 
+  
 
-	if err != nil {
-		log.Println("Error in Resp Body Client Run")
-	}
-	defer response.Body.Close()
-	data, _ := ioutil.ReadAll(response.Body)
-
-	log.Println(string(data))
-	c.Redirect("/")
-	return nil
-
-}
-
-func FormGens(c *fiber.Ctx) error {
-
-	return c.Render("readgenerator", fiber.Map{
-		"n": "Hello From Fiber Html Engine",
-	}, "layouts/htm")
-}
-
-func AddGens(c *fiber.Ctx) error {
-
-	desc := c.Params("description_ofgenerator")
-	name := c.Params("name_ofgenerator")
-	link := c.Params("link")
-	g := hasura.Mutation_add_gen(desc, link, name)
-	req, err := http.NewRequest("POST", Url, bytes.NewBuffer(g))
-	if err != nil {
-		log.Println("Error in Add Generator Mutation")
-	}
-	log.Println("Success in  Mutation Generator")
-	client := &http.Client{}
-	response, err := client.Do(req)
-	if err != nil {
-		log.Println("Error in Resp Body Client Run")
-	}
-
-	defer response.Body.Close()
-	data, _ := ioutil.ReadAll(response.Body)
-
-	log.Println(string(data))
+	log.Println("Failed to sign up")
 	c.Redirect("/gens")
-	return nil
+	return c.Redirect("/")
 
 }
 func ReadGen(c *fiber.Ctx) error {
+	sess, err := Store.Get(c)
+	if err != nil {
+		log.Println("Error in Clieee snt Do Run")
+		log.Println(sess)
+
+	}
 	n := hasura.Query_gens_byname()
 	log.Println(n)
 
@@ -214,7 +239,7 @@ func fetchHttp(hq []byte) DataForm {
 		log.Println("Error in Clieee snt Do Run")
 	}
 	data_bytes, _ := ioutil.ReadAll(response.Body)
-
+	log.Println("string(data_bytes)");log.Println("string(data_bytes)");
 	log.Println(string(data_bytes))
 	data_resp := Request{}
 	err = json.Unmarshal(data_bytes, &data_resp)

@@ -9,13 +9,13 @@ import (
 func Query_gens() []byte {
 
 	gr := map[string]string{
-		"query": ` query MyQuery {
-              loremsite_generators(limit: 3) {
-                link
-                id
-                name
-                desc
-              }
+		"query": ` query MyQuery { 
+				lor_gens(limit: 5) {
+					title
+					gen_id
+					link
+					content
+				  }
             }
 
     `,
@@ -36,11 +36,14 @@ func Query_user_asc() []byte {
 
 	gr := map[string]string{
 		"query": ` query MyQuery {
-          loremsite_users(order_by: {full_name: asc}) {
-            email
-            full_name
-            id
-          }
+			lor_users(order_by: {full_name: asc}) {
+				changed_on
+				created_on
+				email
+				full_name
+				id
+				password
+			  }
         }
     `,
 	}
@@ -60,11 +63,14 @@ func Query_gens_byname() []byte {
 
 	gr := map[string]string{
 		"query": ` query MyQuery {
-          loremsite_users(limit: 10){
-            email
-            full_name
-            id
-          }
+          lor_users(limit: 10){
+			changed_on
+			created_on
+			email
+			full_name
+			id
+			password
+		  }
         }
     `,
 	}
@@ -82,11 +88,14 @@ func Query_user() []byte {
 
 	gr := map[string]string{
 		"query": ` query MyQuery {
-          loremsite_users(limit: 3) {
-            email
-            full_name
-            id
-          }
+			lor_users {
+				changed_on
+				created_on
+				email
+				full_name
+				id
+				password
+			  }
         }
     `,
 	}
@@ -100,14 +109,15 @@ func Query_user() []byte {
 	return json
 }
 
-func Mutation_add_gen(desc string, link string, name string) []byte {
-	log.Println(desc)
-	log.Println(link)
+func Mutation_add_gen(changed_on string, link string, content string,  created_on string , title string) []byte {
+	log.Println(created_on)
+	log.Println(changed_on) 
+	 
 	gq := map[string]string{
 		"query": `
       mutation MyMutation {
-        insert_loremsite_generators_one(object: {desc: "` + desc + `", link: "` + link + `", name: "` + name + `"})
-      }
+         insert_lor_gens(objects: {changed_on: "` + changed_on  + `", content: "` + content  + `", created_on: "` + created_on + `", link: "` + link + `", title: "` + title + `"})  
+	}
     
     `,
 	}
@@ -121,20 +131,17 @@ func Mutation_add_gen(desc string, link string, name string) []byte {
 
 }
 
-func Mutation_signup_user(email string, fullname string) []byte {
-	log.Println(email)
-	log.Println(email)
+func Mutation_signup_user(password string, full_name string, email string,created_on string ,changed_on string  ) []byte {
+    log.Printf("@ Mutation_add_gen @Mutation_add_gen Form in  Mutation %v , %v , %v", password ,email , full_name)
+	log.Printf("Form in  Mutation %v , %v , %v", password ,email , full_name)
 	gr := map[string]string{
 		"query": `mutation MyMutation {
-      insert_loremsite_users_one(object: {full_name: "` + fullname + `", password: "ewew", email: "` + email + `"}) {
-        id
-      }
-    }
+			insert_lor_users_one(object: {password: "`+password+`",  full_name: "`+full_name+`", email: "`+email+`", created_on: "`+created_on+`", changed_on: "`+changed_on+`"}) {
+            id }
+	  }
     `,
 	}
-
-	log.Println(">>gr")
-	log.Println(gr)
+ 
 	json, err := json.Marshal(gr)
 	if err != nil {
 		log.Println("Error Marshal")

@@ -10,7 +10,7 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/recover"
 	"github.com/gofiber/template/html"
 
-	_ "github.com/gofiber/fiber/v2/middleware/csrf"
+	"github.com/gofiber/fiber/v2/middleware/csrf"
 )
 
 func NewApplication() *fiber.App {
@@ -23,8 +23,8 @@ func NewApplication() *fiber.App {
 	app.Static("/", "./assets")
 
 	app.Use(recover.New())
-	app.Use(logger.New())
-
+	app.Use(logger.New());app.Use(csrf.New());
+    
 	app.Get("/dashboard", monitor.New())
 
 	// Initialize default config

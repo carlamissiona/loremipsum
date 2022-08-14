@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="Start your development with Creative Design landing page.">
     <meta name="author" content="Devcrud">
-    <title>Loremipsum | Free Bootstrap 4.3.x template</title>
+    <title>Loremipsum | Generator Site</title>
 
     <!-- font icons -->
     <link rel="stylesheet" href="/vendors/themify-icons/css/themify-icons.css">
@@ -34,18 +34,20 @@
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="/register">Register</a>
-                    </li>
+                    </li>  
                    
                     <li class="nav-item">
                         <a class="nav-link" href="/contactus">Contact</a>
                     </li>
                     <li class="nav-item ml-md-4">
-                        <a class="nav-link btn btn-primary" href="components.html">Components</a>
+                        <a class="nav-link btn btn-primary" href="components.html">
+                            Login
+                        </a>  
                     </li>
                 </ul>
             </div>
         </div>
-    </nav><!-- End of Page Navbar -->   
+    </nav><!-- End of Page Navbar -->    
 
     <!-- Page Header -->
     <header id="home" class="header">
@@ -116,7 +118,7 @@
  
 
     <!-- Section -->
-    <section class="has-bg-img text-center text-light height-auto" style="background-image: url(assets/imgs/bg-img-2.jpg)">
+    <section class="  text-center text-light height-auto">
            <div class="container"> <a href="generator/meme">  
              <h1 class="display-4"> 
                 Generate Meme 
@@ -133,10 +135,11 @@
             <h1>SIGNUP</h1>
             <p class="mb-5">If you have some Questions or need Help! Please Contact Us! <br> 
             We make Cool and Clean Design for your Business!!</p>
-            
+           
             <!-- Contact form -->
-            <form method="GET" action="/signup" class="contact-form col-md-11 col-lg-9 mx-auto">
-                <div class="form-row">
+            <form action="/signup" class="contact-form col-md-11 col-lg-9 mx-auto">
+                <input type="hidden" name="csrf" value="{{ .token }}">
+                <div class="form-row"> 
                     <div class="col form-group"> 
                         <input type="text" name="name" class="form-control" placeholder="Name">
                     </div>
