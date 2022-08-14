@@ -2,9 +2,11 @@ package hasura
 
 import (
 	"encoding/json"
-
-	"log"
-)
+	
+		"log"
+		)
+		
+	 
 
 func Query_gens() []byte {
 
@@ -105,7 +107,8 @@ func Query_user() []byte {
 	if err != nil {
 		log.Println("Error Marshal")
 	}
-
+	log.Println("Query_userjson");log.Println("Query_userjson");log.Println(json)
+	log.Println("Query_userjson");log.Println("Query_userjson");log.Println(json)
 	return json
 }
 
@@ -126,7 +129,7 @@ func Mutation_add_gen(changed_on string, link string, content string,  created_o
 	if err != nil {
 		log.Println("Error Marshal")
 	}
-
+	log.Println("json");log.Println("json");log.Println(json)
 	return json
 
 }
@@ -141,11 +144,11 @@ func Mutation_signup_user(password string, full_name string, email string,create
 	  }
     `,
 	}
- 
+	log.Printf("qry string %v", gr);	log.Printf("qry string %v", gr);	log.Printf("qry string %v", gr);
 	json, err := json.Marshal(gr)
 	if err != nil {
 		log.Println("Error Marshal")
 	}
-
+    log.Println("json");log.Println("json");log.Println(json)
 	return json
 }

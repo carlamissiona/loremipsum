@@ -62,15 +62,14 @@ func RenderHome(c *fiber.Ctx) error {
 }
 func RenderIndex(c *fiber.Ctx) error {
 	sess, err :=Store.Get(c)
-	log.Println("Index Sess");log.Println(sess)
+	log.Println("Index Sess--");log.Println(sess)
 	if err != nil {
 		log.Println("Index err")
 		log.Println(err)
 	}
 
 	q := hasura.Query_user() 
- 	data_resp := fetchHttp(q)
-	log.Println(sess)
+ 	data_resp := fetchHttp(q) 
  
 	name := sess.Get("name");log.Println(sess.Get("name"))
 	showLogin := name != nil
@@ -84,7 +83,7 @@ func RenderIndex(c *fiber.Ctx) error {
 		"Loremusers": data_resp.Lor_Users,
 		"Loremgens": gens, 
 		"Namelogin": name, 
-	},  "layouts/htm") 
+	},  "layouts/template") 
 }
 
 func fetchGenerators() []Generators {
@@ -126,7 +125,7 @@ func RenderAddGraph(c *fiber.Ctx) error {
 
 	return c.Render("index", fiber.Map{
 		"FiberTitle": "Hello From Fiber Html Engine",
-	}, "layouts/htm")
+	}, "layouts/template")
 }
 func AddGens(c *fiber.Ctx) error {
 
@@ -164,17 +163,20 @@ func RenderRegister(c *fiber.Ctx) error {
 }
    
 func SignupSubmit(c *fiber.Ctx) error { 
+	sess, err := Store.Get(c)
 	full_name := c.FormValue("name")
 	email := c.FormValue("email") 
 	password := c.FormValue("password")
+
 	created_on := "2022-01-01 00:00:00"; changed_on :="2022-01-01 00:00:00" ;
+
 	q := hasura.Mutation_signup_user( password , full_name , email ,created_on  ,changed_on   ) 
 	req, err := http.NewRequest("POST", Url, bytes.NewBuffer(q))
-	sess, err := Store.Get(c)
-	log.Println("Req in  Mutation" , req)
+ 
 
 	if err != nil {
 		log.Println("Error in  Mutation")
+		log.Println(err)
 	}else{
 		sess.Set("name", full_name)
 		name := sess.Get("name") 
@@ -183,7 +185,8 @@ func SignupSubmit(c *fiber.Ctx) error {
 		return c.Redirect("/home")
  
 	} 
-  
+	 
+	log.Println("Req in ---SignupSubmit Mutation" , req)
 
 	log.Println("Failed to sign up")
 	c.Redirect("/gens")
@@ -202,7 +205,7 @@ func ReadGen(c *fiber.Ctx) error {
 
 	return c.Render("readgenerator", fiber.Map{
 		"n": "Hello From Fiber Html Engine",
-	}, "layouts/htm")
+	}, "layouts/template")
 }
 
 func RenderGenerators(c *fiber.Ctx) error {
@@ -212,14 +215,14 @@ func RenderGenerators(c *fiber.Ctx) error {
 	return c.Render("listgens", fiber.Map{
 		"FiberTitle": "Hello From Fiber Html Engine",
 		"Loremgens":  gens,
-	}, "layouts/htm")
+	}, "layouts/template")
 }
 
 func RenderContact(c *fiber.Ctx) error {
 
 	return c.Render("contact", fiber.Map{
 		"FiberTitle": "Hello From Fiber Html Engine",
-	}, "layouts/htm")
+	}, "layouts/template")
 }
 
 func fetchHttp(hq []byte) DataForm {
